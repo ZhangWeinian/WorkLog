@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+	x:Class="WorkLog.AppShell"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:local="clr-namespace:WorkLog">
+
+	<FlyoutItem Title="工作日志">
+		<FlyoutItem.Icon>
+			<FontImageSource
+				FontFamily="FluentIcons"
+				Glyph="&#xE8A5;"
+				Color="{AppThemeBinding Light=Black,
+				                        Dark=White}" />
+		</FlyoutItem.Icon>
+		<ShellContent ContentTemplate="{DataTemplate local:MainPageView}" Route="MainPageView" />
+	</FlyoutItem>
+
+	<FlyoutItem Title="今日待办">
+		<FlyoutItem.Icon>
+			<FontImageSource
+				FontFamily="FluentIcons"
+				Glyph="&#xE945;"
+				Color="{AppThemeBinding Light=Black,
+				                        Dark=White}" />
+		</FlyoutItem.Icon>
+		<ShellContent ContentTemplate="{DataTemplate local:MainPageView}" Route="TodayTodoView" />
+	</FlyoutItem>
+
+	<FlyoutItem Title="所有任务">
+		<FlyoutItem.Icon>
+			<FontImageSource
+				FontFamily="FluentIcons"
+				Glyph="&#xE8F1;"
+				Color="{AppThemeBinding Light=Black,
+				                        Dark=White}" />
+		</FlyoutItem.Icon>
+		<ShellContent ContentTemplate="{DataTemplate local:MainPageView}" Route="AllTasksView" />
+	</FlyoutItem>
+
+	<Shell.MenuItemTemplate>
+		<DataTemplate>
+			<BoxView
+				Margin="0,5"
+				BackgroundColor="{AppThemeBinding Light=#E0E0E0,
+				                                  Dark=#3A3A3A}"
+				HeightRequest="1" />
+		</DataTemplate>
+	</Shell.MenuItemTemplate>
+</Shell>

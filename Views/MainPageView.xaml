@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+	x:Class="WorkLog.MainPageView"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:converters="clr-namespace:WorkLog.Converters"
+	xmlns:models="clr-namespace:WorkLog.Models"
+	xmlns:vm="clr-namespace:WorkLog.ViewModels"
+	x:DataType="vm:MainPageViewModel"
+	BackgroundColor="{AppThemeBinding Light=#F9F9F9,
+	                                  Dark=#1C1C1E}"
+	Shell.NavBarIsVisible="False">
+
+	<ContentPage.Resources>
+		<converters:EnumToDescriptionConverter x:Key="EnumDescriptionConverter" />
+	</ContentPage.Resources>
+
+	<Grid ColumnDefinitions="*, 3*">
+
+		<Grid
+			Grid.Column="0"
+			Padding="15"
+			BackgroundColor="{AppThemeBinding Light=White,
+			                                  Dark=#2C2C2C}"
+			RowDefinitions="Auto, Auto, *"
+			RowSpacing="10">
+
+			<Grid Grid.Row="0" ColumnDefinitions="*, Auto">
+				<Label
+					FontAttributes="Bold"
+					FontSize="Title"
+					Text="事件流"
+					VerticalOptions="Center" />
+				<Button
+					Grid.Row="0"
+					Grid.Column="1"
+					Command="{Binding ClearCommand}"
+					CornerRadius="8"
+					HorizontalOptions="End"
+					Text="+ 新建日志" />
+			</Grid>
+
+			<SearchBar Grid.Row="1" Placeholder="搜索日志描述或标签..." />
+
+			<CollectionView
+				Grid.Row="2"
+				ItemsSource="{Binding Events}"
+				SelectedItem="{Binding SelectedEvent}"
+				SelectionMode="Single">
+				<CollectionView.ItemTemplate>
+					<DataTemplate x:DataType="models:WorkEvent">
+						<Border
+							Margin="0,0,0,10"
+							Padding="15"
+							Stroke="{AppThemeBinding Light=#E0E0E0,
+							                         Dark=#404040}"
+							StrokeThickness="1">
+
+							<Border.StrokeShape>
+								<RoundRectangle CornerRadius="8" />
+							</Border.StrokeShape>
+
+							<Border.Shadow>
+								<Shadow
+									Brush="Black"
+									Opacity="0.2"
+									Radius="10"
+									Offset="5,5" />
+							</Border.Shadow>
+
+							<VerticalStackLayout Spacing="5">
+								<Label
+									FontAttributes="Bold"
+									LineBreakMode="WordWrap"
+									Text="{Binding Description}" />
+
+								<HorizontalStackLayout Spacing="10">
+									<Label
+										FontSize="Caption"
+										Text="{Binding Status, Converter={StaticResource EnumDescriptionConverter}}"
+										TextColor="{StaticResource Primary}" />
+									<Label
+										FontSize="Caption"
+										Text="{Binding Timestamp, StringFormat='{0:yyyy-MM-dd HH:mm}'}"
+										TextColor="{StaticResource Gray500}" />
+								</HorizontalStackLayout>
+							</VerticalStackLayout>
+						</Border>
+					</DataTemplate>
+				</CollectionView.ItemTemplate>
+			</CollectionView>
+		</Grid>
+
+		<Grid Grid.Column="1" RowDefinitions="*, Auto">
+			<ScrollView Grid.Row="0">
+				<VerticalStackLayout Padding="25" Spacing="20">
+					<Label
+						FontAttributes="Bold"
+						FontSize="Title"
+						Text="编辑日志" />
+					<Editor
+						FontFamily="MapleMono"
+						FontSize="Micro"
+						HeightRequest="400"
+						IsSpellCheckEnabled="False"
+						Placeholder="在这里详细记录事件..."
+						Text="{Binding DescriptionText}" />
+
+					<Label
+						FontAttributes="Bold"
+						FontSize="Title"
+						Text="备注" />
+					<Editor
+						FontFamily="MapleMono"
+						FontSize="Micro"
+						HeightRequest="100"
+						IsSpellCheckEnabled="False"
+						Placeholder="输入可选的备注信息..."
+						Text="{Binding RemarksText}" />
+
+					<Grid
+						ColumnDefinitions="*, *, *"
+						ColumnSpacing="15"
+						RowSpacing="10"
+						VerticalOptions="Center">
+
+						<HorizontalStackLayout
+							Grid.Column="0"
+							HorizontalOptions="Center"
+							Spacing="10"
+							VerticalOptions="Center">
+							<Label
+								FontAttributes="Bold"
+								FontSize="Micro"
+								Text="日期:"
+								VerticalOptions="Center" />
+							<DatePicker
+								Date="{Binding SelectedDate}"
+								FontSize="Micro"
+								VerticalOptions="Center" />
+						</HorizontalStackLayout>
+
+						<Grid
+							Grid.Column="1"
+							ColumnDefinitions="Auto, *"
+							ColumnSpacing="10"
+							HorizontalOptions="Center">
+							<Label
+								Grid.Column="0"
+								FontAttributes="Bold"
+								FontSize="Micro"
+								Text="定位:"
+								VerticalOptions="Center" />
+							<Picker
+								Grid.Column="1"
+								FontSize="Micro"
+								ItemDisplayBinding="{Binding ., Converter={StaticResource EnumDescriptionConverter}}"
+								ItemsSource="{Binding EventTypes}"
+								SelectedItem="{Binding SelectedEventType}" />
+						</Grid>
+
+						<Grid
+							Grid.Column="2"
+							ColumnDefinitions="Auto, *"
+							ColumnSpacing="10"
+							HorizontalOptions="Center">
+							<Label
+								Grid.Column="0"
+								FontAttributes="Bold"
+								FontSize="Micro"
+								Text="状态:"
+								VerticalOptions="Center" />
+							<Picker
+								Grid.Column="1"
+								FontSize="Micro"
+								ItemDisplayBinding="{Binding ., Converter={StaticResource EnumDescriptionConverter}}"
+								ItemsSource="{Binding Statuses}"
+								SelectedItem="{Binding SelectedStatus}" />
+						</Grid>
+					</Grid>
+				</VerticalStackLayout>
+			</ScrollView>
+
+			<Grid
+				Grid.Row="1"
+				Padding="25"
+				ColumnDefinitions="Auto, *, Auto"
+				VerticalOptions="End">
+
+				<Button
+					Grid.Column="0"
+					BackgroundColor="{StaticResource Dangerous}"
+					Command="{Binding DeleteCommand}"
+					HorizontalOptions="Start"
+					Text="删除"
+					TextColor="White" />
+
+				<Button
+					Grid.Column="1"
+					BackgroundColor="{AppThemeBinding Light=#EFEFEF,
+					                                  Dark=#505050}"
+					Command="{Binding ClearCommand}"
+					HorizontalOptions="Center"
+					Text="清空"
+					TextColor="{AppThemeBinding Light=Black,
+					                            Dark=White}" />
+
+				<Button
+					Grid.Column="2"
+					BackgroundColor="{StaticResource Primary}"
+					Command="{Binding SaveCommand}"
+					FontAttributes="Bold"
+					HorizontalOptions="End"
+					Text="保存日志"
+					TextColor="White" />
+			</Grid>
+		</Grid>
+	</Grid>
+</ContentPage>
