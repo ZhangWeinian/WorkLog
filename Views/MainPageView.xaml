@@ -34,7 +34,7 @@
 				<Button
 					Grid.Row="0"
 					Grid.Column="1"
-					Command="{Binding ClearCommand}"
+					Command="{Binding ClearFormCommand}"
 					CornerRadius="8"
 					HorizontalOptions="End"
 					Text="+ 新建日志" />
@@ -199,7 +199,7 @@
 					Grid.Column="1"
 					BackgroundColor="{AppThemeBinding Light=#EFEFEF,
 					                                  Dark=#505050}"
-					Command="{Binding ClearCommand}"
+					Command="{Binding ClearFormCommand}"
 					HorizontalOptions="Center"
 					Text="清空"
 					TextColor="{AppThemeBinding Light=Black,
