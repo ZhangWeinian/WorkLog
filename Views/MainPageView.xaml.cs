@@ -1,6 +1,6 @@
 using WorkLog.ViewModels;
 
-namespace WorkLog;
+namespace WorkLog.Views;
 
 public partial class MainPageView : ContentPage
 {

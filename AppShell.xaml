@@ -3,7 +3,7 @@
 	x:Class="WorkLog.AppShell"
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-	xmlns:local="clr-namespace:WorkLog">
+	xmlns:local="clr-namespace:WorkLog.Views">
 
 	<FlyoutItem Title="工作日志">
 		<FlyoutItem.Icon>
@@ -13,10 +13,10 @@
 				Color="{AppThemeBinding Light=Black,
 				                        Dark=White}" />
 		</FlyoutItem.Icon>
-		<ShellContent ContentTemplate="{DataTemplate local:MainPageView}" Route="MainPageView" />
+		<ShellContent ContentTemplate="{DataTemplate local:MainPageView}" />
 	</FlyoutItem>
 
-	<FlyoutItem Title="今日待办">
+	<FlyoutItem Title="日程表">
 		<FlyoutItem.Icon>
 			<FontImageSource
 				FontFamily="FluentIcons"
@@ -24,7 +24,7 @@
 				Color="{AppThemeBinding Light=Black,
 				                        Dark=White}" />
 		</FlyoutItem.Icon>
-		<ShellContent ContentTemplate="{DataTemplate local:MainPageView}" Route="TodayTodoView" />
+		<ShellContent ContentTemplate="{DataTemplate local:WorkSchedulePageView}" />
 	</FlyoutItem>
 
 	<FlyoutItem Title="所有任务">
@@ -35,7 +35,7 @@
 				Color="{AppThemeBinding Light=Black,
 				                        Dark=White}" />
 		</FlyoutItem.Icon>
-		<ShellContent ContentTemplate="{DataTemplate local:MainPageView}" Route="AllTasksView" />
+		<ShellContent ContentTemplate="{DataTemplate local:AllLogsPageView}" />
 	</FlyoutItem>
 
 	<Shell.MenuItemTemplate>

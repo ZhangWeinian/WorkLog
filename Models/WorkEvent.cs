@@ -18,6 +18,12 @@ namespace WorkLog.Models
 		}
 
 		/// <summary>
+		/// 事件的标题，通常是必需的。
+		/// </summary>
+		[NotNull]
+		public string Title { get; set; } = string.Empty;
+
+		/// <summary>
 		/// 事件的描述，这是日志的主要内容。
 		/// </summary>
 		[NotNull]

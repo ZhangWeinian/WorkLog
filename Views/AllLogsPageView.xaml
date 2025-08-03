@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+	x:Class="WorkLog.Views.AllLogsPageView"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:models="clr-namespace:WorkLog.Models"
+	xmlns:vm="clr-namespace:WorkLog.ViewModels"
+	x:DataType="vm:AllLogsPageViewModel">
+
+	<ContentPage.Resources>
+		<ResourceDictionary>
+			<converters:EnumToDescriptionConverter xmlns:converters="clr-namespace:WorkLog.Converters" x:Key="EnumDescriptionConverter" />
+		</ResourceDictionary>
+	</ContentPage.Resources>
+
+	<Grid RowDefinitions="Auto, *">
+		<Border
+			Grid.Row="0"
+			Margin="10"
+			Padding="10">
+			<VerticalStackLayout Spacing="10">
+				<Label FontAttributes="Bold" Text="筛选条件" />
+				<HorizontalStackLayout HorizontalOptions="Center" Spacing="10">
+					<DatePicker Date="{Binding FilterStartDate}" />
+					<Label Text="至" VerticalOptions="Center" />
+					<DatePicker Date="{Binding FilterEndDate}" />
+				</HorizontalStackLayout>
+				<HorizontalStackLayout HorizontalOptions="Center" Spacing="10">
+					<Picker
+						Title="按类型筛选..."
+						ItemsSource="{Binding Source={x:Static models:EventTypeExtensions.All}}"
+						SelectedItem="{Binding SelectedFilterType}" />
+					<Picker
+						Title="按状态筛选..."
+						ItemsSource="{Binding Source={x:Static models:EventStatusExtensions.All}}"
+						SelectedItem="{Binding SelectedFilterStatus}" />
+				</HorizontalStackLayout>
+			</VerticalStackLayout>
+		</Border>
+
+		<CollectionView
+			Grid.Row="1"
+			IsGrouped="True"
+			ItemsSource="{Binding GroupedEvents}">
+			<CollectionView.GroupHeaderTemplate>
+				<DataTemplate x:DataType="models:LogGroup">
+					<Label
+						Padding="10"
+						BackgroundColor="{StaticResource Gray100}"
+						FontAttributes="Bold"
+						Text="{Binding Title}" />
+				</DataTemplate>
+			</CollectionView.GroupHeaderTemplate>
+
+			<CollectionView.ItemTemplate>
+				<DataTemplate x:DataType="models:WorkEvent">
+					<Border
+						Padding="15"
+						Stroke="{AppThemeBinding Light=#E0E0E0,
+						                         Dark=#404040}"
+						StrokeThickness="1">
+						<Border.StrokeShape>
+							<RoundRectangle CornerRadius="8" />
+						</Border.StrokeShape>
+
+						<Border.Shadow>
+							<Shadow
+								Brush="Black"
+								Opacity="0.2"
+								Radius="10"
+								Offset="5,5" />
+						</Border.Shadow>
+
+						<VerticalStackLayout Spacing="8">
+							<Label
+								FontAttributes="Bold"
+								LineBreakMode="TailTruncation"
+								MaxLines="4"
+								Text="{Binding Description, Mode=OneWay}" />
+
+							<Grid
+								ColumnDefinitions="Auto, Auto, Auto, *, Auto"
+								ColumnSpacing="10"
+								VerticalOptions="Center">
+
+								<Label
+									Grid.Column="0"
+									FontSize="Caption"
+									Text="{Binding EventType, Converter={StaticResource EnumDescriptionConverter}, Mode=OneWay}"
+									TextColor="{StaticResource Primary}" />
+
+								<BoxView
+									Grid.Column="1"
+									Margin="0,2"
+									VerticalOptions="Fill"
+									WidthRequest="1"
+									Color="{StaticResource Gray300}" />
+
+								<Label
+									Grid.Column="2"
+									FontSize="Caption"
+									Text="{Binding Status, Converter={StaticResource EnumDescriptionConverter}, Mode=OneWay}"
+									TextColor="{StaticResource Primary}" />
+
+								<Label
+									Grid.Column="4"
+									FontSize="Caption"
+									HorizontalOptions="End"
+									Text="{Binding Timestamp, StringFormat='{0:yyyy-MM-dd HH:mm}', Mode=OneWay}"
+									TextColor="{StaticResource Gray500}" />
+							</Grid>
+						</VerticalStackLayout>
+
+						<VisualStateManager.VisualStateGroups>
+							<VisualStateGroup x:Name="CommonStates">
+								<VisualState x:Name="Normal" />
+								<VisualState x:Name="Selected">
+									<VisualState.Setters>
+										<Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#E8E8FF, Dark=#3A3A5A}" />
+									</VisualState.Setters>
+								</VisualState>
+							</VisualStateGroup>
+						</VisualStateManager.VisualStateGroups>
+					</Border>
+				</DataTemplate>
+			</CollectionView.ItemTemplate>
+		</CollectionView>
+	</Grid>
+</ContentPage>

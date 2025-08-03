@@ -10,7 +10,6 @@ namespace WorkLog.ViewModels
 {
 	public partial class MainPageViewModel : ObservableObject
 	{
-		// --- 属性 ---
 		public List<EventType> EventTypes
 		{
 			get;
@@ -29,6 +28,9 @@ namespace WorkLog.ViewModels
 
 		[ObservableProperty]
 		private EventStatus _selectedStatus;
+
+		[ObservableProperty]
+		private string _titleText = string.Empty;
 
 		[ObservableProperty]
 		private string _descriptionText = string.Empty;
@@ -97,14 +99,16 @@ namespace WorkLog.ViewModels
 		[RelayCommand]
 		private async Task SaveAsync()
 		{
-			if (string.IsNullOrWhiteSpace(DescriptionText))
+			if (string.IsNullOrWhiteSpace(TitleText))
 			{
-				await Shell.Current.DisplayAlert("错误", "日志描述不能为空。", "好的");
+				await Shell.Current.DisplayAlert("错误", "日志标题不能为空。", "好的");
 				return;
 			}
+
 			try
 			{
 				var eventToSave = SelectedEvent ?? new WorkEvent();
+				eventToSave.Title = TitleText;
 				eventToSave.Description = DescriptionText;
 				eventToSave.Remarks = RemarksText;
 				eventToSave.EventType = SelectedEventType;
@@ -119,9 +123,9 @@ namespace WorkLog.ViewModels
 				eventToSave.TaskId = 1;
 
 				await WorkLogDatabase.Instance.SaveEventAsync(eventToSave);
-				SelectedEvent = null;
-				await LoadEventsAsync();
 
+				ClearForm();
+				await LoadEventsAsync();
 				await AnimateSaveButtonAsync();
 			}
 			catch (Exception ex)
@@ -149,6 +153,15 @@ namespace WorkLog.ViewModels
 		private void ClearForm()
 		{
 			SelectedEvent = null;
+			TitleText = string.Empty;
+			DescriptionText = string.Empty;
+			RemarksText = string.Empty;
+			SelectedEventType = EventType.BugFix;
+			SelectedStatus = EventStatus.ToDo;
+			SelectedDate = DateTime.Today;
+
+			SaveButtonText = "保存";
+			CopyButtonText = "复制";
 		}
 
 		[RelayCommand(CanExecute = nameof(CanDelete))]
@@ -184,7 +197,10 @@ namespace WorkLog.ViewModels
 		private async Task CopyAsync()
 		{
 			if (string.IsNullOrWhiteSpace(DescriptionText))
+			{
 				return;
+			}
+
 			var contentToCopy = $"问题：\n{DescriptionText}\n\n备注:\n{RemarksText}";
 			await Clipboard.Default.SetTextAsync(contentToCopy);
 			await AnimateCopyButtonAsync();
@@ -199,8 +215,10 @@ namespace WorkLog.ViewModels
 		{
 			string originalText = "复制";
 			string successText = "✓ 已复制";
+
 			CopyButtonText = successText;
 			await Task.Delay(1200);
+
 			CopyButtonText = originalText;
 		}
 
@@ -208,22 +226,16 @@ namespace WorkLog.ViewModels
 		{
 			if (value != null)
 			{
+				TitleText = value.Title;
 				DescriptionText = value.Description;
 				RemarksText = value.Remarks ?? string.Empty;
 				SelectedDate = value.Timestamp.Date;
 				SelectedEventType = value.EventType;
 				SelectedStatus = value.Status;
 			}
-			else
-			{
-				DescriptionText = string.Empty;
-				RemarksText = string.Empty;
-				SelectedEventType = EventType.Feature;
-				SelectedStatus = EventStatus.ToDo;
-				SelectedDate = DateTime.Today;
-			}
+
 			DeleteCommand.NotifyCanExecuteChanged();
-			CopyButtonText = "复制";
+			CopyCommand.NotifyCanExecuteChanged();
 		}
 
 		partial void OnDescriptionTextChanged(string value)
@@ -236,11 +248,15 @@ namespace WorkLog.ViewModels
 			_debounceCts?.Cancel();
 			_debounceCts?.Dispose();
 			_debounceCts = new CancellationTokenSource();
+
 			Task.Delay(300, _debounceCts.Token)
 				.ContinueWith(t =>
 				{
 					if (t.IsCanceled)
+					{
 						return;
+					}
+
 					MainThread.BeginInvokeOnMainThread(FilterEvents);
 				}, TaskScheduler.Default);
 		}
