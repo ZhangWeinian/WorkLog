@@ -10,4 +10,14 @@ public partial class AllLogsPageView : ContentPage
 
 		BindingContext = new AllLogsPageViewModel();
 	}
+
+	protected override void OnAppearing()
+	{
+		base.OnAppearing();
+
+		if (BindingContext is AllLogsPageViewModel vm)
+		{
+			_ = vm.LoadEventsCommand.ExecuteAsync(null);
+		}
+	}
 }

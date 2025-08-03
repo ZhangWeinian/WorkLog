@@ -53,6 +53,34 @@
 					<LinearItemsLayout ItemSpacing="5" Orientation="Vertical" />
 				</CollectionView.ItemsLayout>
 
+				<CollectionView.EmptyView>
+					<StackLayout
+						Padding="30"
+						HorizontalOptions="Center"
+						Spacing="5"
+						VerticalOptions="Center">
+						<Label
+							FontFamily="FluentIcons"
+							FontSize="48"
+							HorizontalOptions="Center"
+							Text="&#xE783;"
+							TextColor="{StaticResource Gray300}" />
+
+						<Label
+							FontAttributes="Bold"
+							FontSize="16"
+							HorizontalOptions="Center"
+							Text="{Binding EmptyViewTitle}"
+							TextColor="{StaticResource Gray500}" />
+
+						<Label
+							FontSize="14"
+							HorizontalOptions="Center"
+							Text="{Binding EmptyViewSubtitle}"
+							TextColor="{StaticResource Gray400}" />
+					</StackLayout>
+				</CollectionView.EmptyView>
+
 				<CollectionView.ItemTemplate>
 					<DataTemplate x:DataType="models:WorkEvent">
 						<Border

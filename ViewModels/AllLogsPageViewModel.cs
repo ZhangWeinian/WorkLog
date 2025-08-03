@@ -27,6 +27,9 @@ namespace WorkLog.ViewModels
 		[ObservableProperty]
 		private DateTime _filterEndDate = DateTime.Now;
 
+		[ObservableProperty]
+		private string _emptyViewMessage = "正在加载日志...";
+
 		public AllLogsPageViewModel()
 		{
 			_ = LoadEventsAsync();
@@ -72,6 +75,18 @@ namespace WorkLog.ViewModels
 			foreach (var group in grouped)
 			{
 				GroupedEvents.Add(group);
+			}
+
+			if (GroupedEvents.Count == 0)
+			{
+				if (_selectedFilterType.HasValue || _selectedFilterStatus.HasValue)
+				{
+					EmptyViewMessage = "在当前筛选条件下没有找到日志。";
+				}
+				else
+				{
+					EmptyViewMessage = "你还没有记录任何日志。快去工作台添加第一条吧！";
+				}
 			}
 		}
 

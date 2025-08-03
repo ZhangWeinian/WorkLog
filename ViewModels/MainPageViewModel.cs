@@ -57,11 +57,18 @@ namespace WorkLog.ViewModels
 
 		private CancellationTokenSource? _debounceCts;
 
+		[ObservableProperty]
+		private string _emptyViewTitle = string.Empty;
+
+		[ObservableProperty]
+		private string _emptyViewSubtitle = string.Empty;
+
 		public MainPageViewModel()
 		{
 			EventTypes = [.. Enum.GetValues<EventType>()];
 			Statuses = [.. Enum.GetValues<EventStatus>()];
 			ClearForm();
+			UpdateEmptyViewMessage();
 		}
 
 		[RelayCommand]
@@ -158,7 +165,24 @@ namespace WorkLog.ViewModels
 			{
 				Events.Add(ev);
 			}
+
+			UpdateEmptyViewMessage();
 		}
+
+		private void UpdateEmptyViewMessage()
+		{
+			if (!string.IsNullOrWhiteSpace(SearchText) && Events.Count == 0)
+			{
+				EmptyViewTitle = $"没有找到包含“{SearchText}”的日志";
+				EmptyViewSubtitle = "请尝试更换搜索关键词。";
+			}
+			else if (Events.Count == 0)
+			{
+				EmptyViewTitle = "你还没有任何日志记录";
+				EmptyViewSubtitle = "点击“+ 新建日志”开始吧！";
+			}
+		}
+
 
 		[RelayCommand]
 		private async Task SaveAsync()
