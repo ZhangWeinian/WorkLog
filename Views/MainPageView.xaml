@@ -137,6 +137,7 @@
 					<VerticalStackLayout Spacing="5">
 						<Label FontAttributes="Bold" Text="标题" />
 						<Entry
+							FontFamily="MapleMono"
 							FontSize="Micro"
 							Placeholder="一句话概括日志内容..."
 							Text="{Binding TitleText}" />

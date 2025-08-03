@@ -172,7 +172,7 @@ namespace WorkLog.ViewModels
 				return;
 			}
 
-			bool answer = await Shell.Current.DisplayAlert("确认删除", $"你确定要删除这条日志吗？\n\n'{SelectedEvent.Description}'", "是，删除", "否");
+			bool answer = await Shell.Current.DisplayAlert("确认删除", $"你确定要删除这条日志吗？\n\n{SelectedEvent.Title}\n\n'{SelectedEvent.Description}'", "是，删除", "否");
 			if (answer)
 			{
 				try
@@ -201,7 +201,7 @@ namespace WorkLog.ViewModels
 				return;
 			}
 
-			var contentToCopy = $"问题：\n{DescriptionText}\n\n备注:\n{RemarksText}";
+			var contentToCopy = $"日期：{SelectedDate.ToShortDateString()}\n标题：{TitleText}\n问题：{DescriptionText}\n备注：{RemarksText ?? "无"}";
 			await Clipboard.Default.SetTextAsync(contentToCopy);
 			await AnimateCopyButtonAsync();
 		}
@@ -217,7 +217,7 @@ namespace WorkLog.ViewModels
 			string successText = "✓ 已复制";
 
 			CopyButtonText = successText;
-			await Task.Delay(1200);
+			await Task.Delay(800);
 
 			CopyButtonText = originalText;
 		}
