@@ -80,15 +80,79 @@ namespace WorkLog.ViewModels
 
 		private void FilterEvents()
 		{
-			var filtered = string.IsNullOrWhiteSpace(SearchText)
-				? _allEvents
-				: _allEvents.Where(e =>
-					e.Description.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
-					(e.Remarks != null && e.Remarks.Contains(SearchText, StringComparison.OrdinalIgnoreCase))
+			var searchText = SearchText.Trim();
+
+			if (string.IsNullOrWhiteSpace(searchText))
+			{
+				var sortedAll = _allEvents.OrderByDescending(e => e.Timestamp);
+				Events.Clear();
+				foreach (var ev in sortedAll)
+				{
+					Events.Add(ev);
+				}
+				return;
+			}
+
+			IEnumerable<WorkEvent> filtered = [];
+			bool searchPerformed = false;
+
+			if (searchText.All(char.IsDigit))
+			{
+				switch (searchText.Length)
+				{
+					// 格式: yyyyMMdd (例如 20250903)
+					case 8:
+					{
+						if (int.TryParse(searchText.AsSpan(0, 4), out int year8) &&
+							int.TryParse(searchText.AsSpan(4, 2), out int month8) &&
+							int.TryParse(searchText.AsSpan(6, 2), out int day8) &&
+							month8 >= 1 && month8 <= 12 && day8 >= 1 && day8 <= 31)
+						{
+							filtered = _allEvents.Where(e => e.Timestamp.Year == year8 &&
+															 e.Timestamp.Month == month8 &&
+															 e.Timestamp.Day == day8);
+							searchPerformed = true;
+						}
+						break;
+					}
+
+					// 格式: yyyyMM (例如 202507)
+					case 6:
+					{
+						if (int.TryParse(searchText.AsSpan(0, 4), out int year6) &&
+						int.TryParse(searchText.AsSpan(4, 2), out int month6) &&
+						month6 >= 1 && month6 <= 12)
+						{
+							filtered = _allEvents.Where(e => e.Timestamp.Year == year6 &&
+															 e.Timestamp.Month == month6);
+							searchPerformed = true;
+						}
+						break;
+					}
+
+					// 格式: yyyy (例如 2025)
+					case 4:
+					{
+						if (int.TryParse(searchText, out int year4))
+						{
+							filtered = _allEvents.Where(e => e.Timestamp.Year == year4);
+							searchPerformed = true;
+						}
+						break;
+					}
+				}
+			}
+
+			if (!searchPerformed)
+			{
+				filtered = _allEvents.Where(e =>
+					e.Description.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+					e.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+					(e.Remarks != null && e.Remarks.Contains(searchText, StringComparison.OrdinalIgnoreCase))
 				  );
+			}
 
 			var sorted = filtered.OrderByDescending(e => e.Timestamp);
-
 			Events.Clear();
 			foreach (var ev in sorted)
 			{
@@ -249,7 +313,7 @@ namespace WorkLog.ViewModels
 			_debounceCts?.Dispose();
 			_debounceCts = new CancellationTokenSource();
 
-			Task.Delay(300, _debounceCts.Token)
+			Task.Delay(330, _debounceCts.Token)
 				.ContinueWith(t =>
 				{
 					if (t.IsCanceled)
