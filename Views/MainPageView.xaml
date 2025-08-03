@@ -41,7 +41,10 @@
 					Text="+ 新建日志" />
 			</Grid>
 
-			<SearchBar Grid.Row="1" Placeholder="搜索日志描述或标签..." />
+			<SearchBar
+				Grid.Row="1"
+				Placeholder="搜索日志描述或标签..."
+				Text="{Binding SearchText}" />
 
 			<CollectionView
 				Grid.Row="2"
@@ -74,7 +77,8 @@
 							<VerticalStackLayout Spacing="8">
 								<Label
 									FontAttributes="Bold"
-									LineBreakMode="WordWrap"
+									LineBreakMode="TailTruncation"
+									MaxLines="4"
 									Text="{Binding Description, Mode=OneWay}" />
 
 								<Grid

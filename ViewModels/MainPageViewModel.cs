@@ -10,6 +10,7 @@ namespace WorkLog.ViewModels
 {
 	public partial class MainPageViewModel : ObservableObject
 	{
+		// --- 属性 ---
 		public List<EventType> EventTypes
 		{
 			get;
@@ -47,11 +48,17 @@ namespace WorkLog.ViewModels
 		[ObservableProperty]
 		private string _saveButtonText = "保存";
 
+		private List<WorkEvent> _allEvents = [];
+
+		[ObservableProperty]
+		private string _searchText = string.Empty;
+
+		private CancellationTokenSource? _debounceCts;
+
 		public MainPageViewModel()
 		{
 			EventTypes = [.. Enum.GetValues<EventType>()];
 			Statuses = [.. Enum.GetValues<EventStatus>()];
-
 			ClearForm();
 		}
 
@@ -60,18 +67,30 @@ namespace WorkLog.ViewModels
 		{
 			try
 			{
-				var eventList = await WorkLogDatabase.Instance.GetEventsAsync();
-				var sortedEvents = eventList.OrderByDescending(e => e.Timestamp);
-
-				Events.Clear();
-				foreach (var ev in sortedEvents)
-				{
-					Events.Add(ev);
-				}
+				_allEvents = await WorkLogDatabase.Instance.GetEventsAsync();
+				FilterEvents();
 			}
 			catch (Exception ex)
 			{
 				await Shell.Current.DisplayAlert("加载失败", $"加载日志时出错: {ex.Message}", "好的");
+			}
+		}
+
+		private void FilterEvents()
+		{
+			var filtered = string.IsNullOrWhiteSpace(SearchText)
+				? _allEvents
+				: _allEvents.Where(e =>
+					e.Description.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
+					(e.Remarks != null && e.Remarks.Contains(SearchText, StringComparison.OrdinalIgnoreCase))
+				  );
+
+			var sorted = filtered.OrderByDescending(e => e.Timestamp);
+
+			Events.Clear();
+			foreach (var ev in sorted)
+			{
+				Events.Add(ev);
 			}
 		}
 
@@ -83,7 +102,6 @@ namespace WorkLog.ViewModels
 				await Shell.Current.DisplayAlert("错误", "日志描述不能为空。", "好的");
 				return;
 			}
-
 			try
 			{
 				var eventToSave = SelectedEvent ?? new WorkEvent();
@@ -94,16 +112,13 @@ namespace WorkLog.ViewModels
 
 				if (eventToSave.Id == 0)
 				{
-					DateTime userSelectedDate = SelectedDate.Date;
-					TimeSpan currentTime = DateTime.Now.TimeOfDay;
-					eventToSave.Timestamp = userSelectedDate.Add(currentTime);
+					eventToSave.Timestamp = SelectedDate.Date.Add(DateTime.Now.TimeOfDay);
 				}
 
 				eventToSave.ProjectId = 1;
 				eventToSave.TaskId = 1;
 
 				await WorkLogDatabase.Instance.SaveEventAsync(eventToSave);
-
 				SelectedEvent = null;
 				await LoadEventsAsync();
 
@@ -140,7 +155,9 @@ namespace WorkLog.ViewModels
 		private async Task DeleteAsync()
 		{
 			if (SelectedEvent == null)
+			{
 				return;
+			}
 
 			bool answer = await Shell.Current.DisplayAlert("确认删除", $"你确定要删除这条日志吗？\n\n'{SelectedEvent.Description}'", "是，删除", "否");
 			if (answer)
@@ -148,7 +165,6 @@ namespace WorkLog.ViewModels
 				try
 				{
 					await WorkLogDatabase.Instance.DeleteEventAsync(SelectedEvent);
-
 					SelectedEvent = null;
 					await LoadEventsAsync();
 				}
@@ -162,6 +178,30 @@ namespace WorkLog.ViewModels
 		private bool CanDelete()
 		{
 			return SelectedEvent != null && SelectedEvent.Id != 0;
+		}
+
+		[RelayCommand(CanExecute = nameof(CanCopy))]
+		private async Task CopyAsync()
+		{
+			if (string.IsNullOrWhiteSpace(DescriptionText))
+				return;
+			var contentToCopy = $"问题：\n{DescriptionText}\n\n备注:\n{RemarksText}";
+			await Clipboard.Default.SetTextAsync(contentToCopy);
+			await AnimateCopyButtonAsync();
+		}
+
+		private bool CanCopy()
+		{
+			return !string.IsNullOrWhiteSpace(DescriptionText);
+		}
+
+		private async Task AnimateCopyButtonAsync()
+		{
+			string originalText = "复制";
+			string successText = "✓ 已复制";
+			CopyButtonText = successText;
+			await Task.Delay(1200);
+			CopyButtonText = originalText;
 		}
 
 		partial void OnSelectedEventChanged(WorkEvent? value)
@@ -182,49 +222,27 @@ namespace WorkLog.ViewModels
 				SelectedStatus = EventStatus.ToDo;
 				SelectedDate = DateTime.Today;
 			}
-
 			DeleteCommand.NotifyCanExecuteChanged();
-
 			CopyButtonText = "复制";
-		}
-
-		[RelayCommand(CanExecute = nameof(CanCopy))]
-		private async Task CopyAsync()
-		{
-			if (string.IsNullOrWhiteSpace(DescriptionText))
-			{
-				return;
-			}
-
-			var contentToCopy = DescriptionText;
-			if (!string.IsNullOrWhiteSpace(RemarksText))
-			{
-				contentToCopy = $"问题：\n{contentToCopy}\n\n备注:\n{RemarksText}";
-			}
-
-			await Clipboard.Default.SetTextAsync(contentToCopy);
-
-			await AnimateCopyButtonAsync();
-		}
-
-		private bool CanCopy()
-		{
-			return !string.IsNullOrWhiteSpace(DescriptionText);
-		}
-
-		private async Task AnimateCopyButtonAsync()
-		{
-			string originalText = "复制";
-			string successText = "✓ 已复制";
-
-			CopyButtonText = successText;
-			await Task.Delay(1200);
-			CopyButtonText = originalText;
 		}
 
 		partial void OnDescriptionTextChanged(string value)
 		{
 			CopyCommand.NotifyCanExecuteChanged();
+		}
+
+		partial void OnSearchTextChanged(string value)
+		{
+			_debounceCts?.Cancel();
+			_debounceCts?.Dispose();
+			_debounceCts = new CancellationTokenSource();
+			Task.Delay(300, _debounceCts.Token)
+				.ContinueWith(t =>
+				{
+					if (t.IsCanceled)
+						return;
+					MainThread.BeginInvokeOnMainThread(FilterEvents);
+				}, TaskScheduler.Default);
 		}
 	}
 }
