@@ -2,9 +2,9 @@
 
 WorkLog 是一款专为程序员设计的、简洁高效的桌面工作日志应用。它旨在帮助开发者快速记录、追踪和回顾日常的编程任务、Bug修复和技术学习过程。本项目使用 .NET MAUI 构建，专注于提供流畅、原生的Windows桌面体验。
 
-![应用截图1](DisplayStyle/001.png)
+<img width="2862" height="1528" alt="屏幕截图 2025-08-03 214508" src="https://github.com/user-attachments/assets/d4f8cd4d-92d8-48d8-9285-e518f56b304d" />
 
-![应用截图2](DisplayStyle/002.png)
+<img width="2862" height="1528" alt="屏幕截图 2025-08-03 214556" src="https://github.com/user-attachments/assets/9e16e03d-6a2b-4226-899e-52f7068307d7" />
 
 ## ✨ 项目特性
 
