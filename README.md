@@ -6,6 +6,8 @@ WorkLog 是一款专为程序员设计的、简洁高效的桌面工作日志应
 
 <img width="2862" height="1528" alt="屏幕截图 2025-08-03 214556" src="https://github.com/user-attachments/assets/9e16e03d-6a2b-4226-899e-52f7068307d7" />
 
+<img width="2862" height="1528" alt="image" src="https://github.com/user-attachments/assets/2322e503-220f-4e09-8b18-cc9e128c6d46" />
+
 ## ✨ 项目特性
 
 - **快速录入**: 简洁的界面设计，包含独立的标题和描述区，让你能迅速记录日志的核心内容。
