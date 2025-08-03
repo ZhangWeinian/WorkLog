@@ -1,4 +1,8 @@
+#if DEBUG
+
 using Microsoft.Extensions.Logging;
+
+#endif
 
 namespace WorkLog
 {

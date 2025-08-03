@@ -85,6 +85,12 @@
 
 	<ItemGroup>
 		<!-- App Icon -->
+		<Content Include="Resources\AppIcon\appicon.ico">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Resources\AppIcon\info.ico">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" />
 
 		<!-- Splash Screen -->
