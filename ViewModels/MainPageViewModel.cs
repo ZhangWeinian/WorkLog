@@ -42,6 +42,9 @@ namespace WorkLog.ViewModels
 		private WorkEvent? _selectedEvent;
 
 		[ObservableProperty]
+		private string _copyButtonText = "复制";
+
+		[ObservableProperty]
 		private string _saveButtonText = "保存";
 
 		public MainPageViewModel()
@@ -122,7 +125,7 @@ namespace WorkLog.ViewModels
 			await Task.Delay(400);
 
 			SaveButtonText = successText;
-			await Task.Delay(1500);
+			await Task.Delay(1200);
 
 			SaveButtonText = originalText;
 		}
@@ -181,6 +184,47 @@ namespace WorkLog.ViewModels
 			}
 
 			DeleteCommand.NotifyCanExecuteChanged();
+
+			CopyButtonText = "复制";
+		}
+
+		[RelayCommand(CanExecute = nameof(CanCopy))]
+		private async Task CopyAsync()
+		{
+			if (string.IsNullOrWhiteSpace(DescriptionText))
+			{
+				return;
+			}
+
+			var contentToCopy = DescriptionText;
+			if (!string.IsNullOrWhiteSpace(RemarksText))
+			{
+				contentToCopy = $"问题：\n{contentToCopy}\n\n备注:\n{RemarksText}";
+			}
+
+			await Clipboard.Default.SetTextAsync(contentToCopy);
+
+			await AnimateCopyButtonAsync();
+		}
+
+		private bool CanCopy()
+		{
+			return !string.IsNullOrWhiteSpace(DescriptionText);
+		}
+
+		private async Task AnimateCopyButtonAsync()
+		{
+			string originalText = "复制";
+			string successText = "✓ 已复制";
+
+			CopyButtonText = successText;
+			await Task.Delay(1200);
+			CopyButtonText = originalText;
+		}
+
+		partial void OnDescriptionTextChanged(string value)
+		{
+			CopyCommand.NotifyCanExecuteChanged();
 		}
 	}
 }

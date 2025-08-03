@@ -219,7 +219,7 @@
 			<Grid
 				Grid.Row="1"
 				Padding="25"
-				ColumnDefinitions="Auto, *, Auto"
+				ColumnDefinitions="*, *, *"
 				VerticalOptions="End">
 
 				<Button
@@ -233,14 +233,10 @@
 
 				<Button
 					Grid.Column="1"
-					BackgroundColor="{AppThemeBinding Light=#EFEFEF,
-					                                  Dark=#505050}"
-					Command="{Binding ClearFormCommand}"
+					Command="{Binding CopyCommand}"
 					HorizontalOptions="Center"
-					Style="{StaticResource SecondaryButtonStyle}"
-					Text="清空"
-					TextColor="{AppThemeBinding Light=Black,
-					                            Dark=White}" />
+					Style="{StaticResource CopyButtonStyle}"
+					Text="{Binding CopyButtonText}" />
 
 				<Button
 					Grid.Column="2"
@@ -248,7 +244,7 @@
 					Command="{Binding SaveCommand}"
 					FontAttributes="Bold"
 					HorizontalOptions="End"
-					Style="{StaticResource PrimaryButtonStyle}"
+					Style="{StaticResource SaveButtonStyle}"
 					Text="{Binding SaveButtonText}"
 					TextColor="White" />
 			</Grid>

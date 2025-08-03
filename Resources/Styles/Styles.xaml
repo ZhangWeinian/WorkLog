@@ -446,8 +446,8 @@
 		<Setter Property="SelectedTabColor" Value="{AppThemeBinding Light={StaticResource Gray950}, Dark={StaticResource Gray200}}" />
 	</Style>
 
-	<!--  全局的主按钮样式 (PrimaryButtonStyle)  -->
-	<Style x:Key="PrimaryButtonStyle" TargetType="Button">
+	<!--  保存按钮样式 (SaveButtonStyle)  -->
+	<Style x:Key="SaveButtonStyle" TargetType="Button">
 		<Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
 		<Setter Property="TextColor" Value="White" />
 		<Setter Property="CornerRadius" Value="8" />
@@ -473,24 +473,26 @@
 		</Setter>
 	</Style>
 
-	<!--  全局的次要按钮样式 (SecondaryButtonStyle)  -->
-	<Style x:Key="SecondaryButtonStyle" TargetType="Button">
-		<Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray600}}" />
-		<Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
+	<!--  为复制按钮创建一个次要样式的按钮 (CopyButtonStyle)  -->
+	<Style x:Key="CopyButtonStyle" TargetType="Button">
+		<Setter Property="BackgroundColor" Value="{StaticResource Gray100}" />
+		<Setter Property="TextColor" Value="{StaticResource Gray600}" />
 		<Setter Property="CornerRadius" Value="8" />
 		<Setter Property="Padding" Value="14,10" />
+		<Setter Property="FontAttributes" Value="Bold" />
 		<Setter Property="VisualStateManager.VisualStateGroups">
 			<VisualStateGroupList>
 				<VisualStateGroup x:Name="CommonStates">
 					<VisualState x:Name="Normal" />
 					<VisualState x:Name="Disabled">
 						<VisualState.Setters>
-							<Setter Property="Opacity" Value="0.5" />
+							<Setter Property="BackgroundColor" Value="{StaticResource Gray200}" />
+							<Setter Property="TextColor" Value="{StaticResource Gray400}" />
 						</VisualState.Setters>
 					</VisualState>
 					<VisualState x:Name="Pressed">
 						<VisualState.Setters>
-							<Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray900}}" />
+							<Setter Property="BackgroundColor" Value="{StaticResource Gray300}" />
 							<Setter Property="Scale" Value="0.98" />
 						</VisualState.Setters>
 					</VisualState>
