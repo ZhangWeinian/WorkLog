@@ -1,6 +1,6 @@
-#if DEBUG
-
 using CommunityToolkit.Maui;
+
+#if DEBUG
 
 using Microsoft.Extensions.Logging;
 
