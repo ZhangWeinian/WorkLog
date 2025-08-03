@@ -1,6 +1,6 @@
 # WorkLog - 程序员的极简工作日志
 
-WorkLog 是一款专为程序员设计的、简洁高效的桌面工作日志应用。它旨在帮助开发者快速记录、追踪和回顾日常的编程任务、Bug修复和技术学习过程。本项目使用 .NET MAUI 构建，专注于提供流畅、原生的Windows桌面体验。
+WorkLog 是一款专为程序员设计的、简洁高效的桌面工作日志应用。它旨在帮助开发者快速记录、追踪和回顾日常的编程任务、Bug 修复和技术学习过程。本项目使用 .NET MAUI 构建，专注于提供流畅、原生的 Windows 桌面体验。
 
 <img width="2862" height="1528" alt="屏幕截图 2025-08-03 214508" src="https://github.com/user-attachments/assets/d4f8cd4d-92d8-48d8-9285-e518f56b304d" />
 
@@ -11,7 +11,7 @@ WorkLog 是一款专为程序员设计的、简洁高效的桌面工作日志应
 - **快速录入**: 简洁的界面设计，包含独立的标题和描述区，让你能迅速记录日志的核心内容。
 - **动态列表**: 在主界面左侧实时展示最近的日志事件流，支持无限滚动。
 - **实时搜索**: 输入即搜索，支持对标题和描述的全文内容进行快速、去抖动的客户端内存搜索。
-- **状态与类型管理**: 为每条日志定义清晰的“定位”（如功能开发、Bug修复）和“状态”（如待办、进行中、已完成）。
+- **状态与类型管理**: 为每条日志定义清晰的“定位”（如功能开发、Bug 修复）和“状态”（如待办、进行中、已完成）。
 - **交互式UI**:
   - 所有按钮均有明确的点击动画反馈。
   - “保存”、“复制”按钮在操作成功后，会通过文本动画提供即时、非阻塞的成功提示。
@@ -32,7 +32,7 @@ WorkLog 是一款专为程序员设计的、简洁高效的桌面工作日志应
 - **架构模式**: MVVM (Model-View-ViewModel)
 - **核心库**:
   - [CommunityToolkit.Mvvm](https://github.com/CommunityToolkit/dotnet) (MVVM 工具包，用于属性通知和命令)
-  - [sqlite-net-pcl](https://github.com/praeclarum/sqlite-net) (用于SQLite数据库操作)
+  - [sqlite-net-pcl](https://github.com/praeclarum/sqlite-net) (用于 SQLite 数据库操作)
 - **目标平台**: Windows (当前专注)
 - **开发工具**: Visual Studio 2022
 
@@ -41,7 +41,7 @@ WorkLog 是一款专为程序员设计的、简洁高效的桌面工作日志应
 1.  **环境要求**:
     - Visual Studio 2022 (17.8 或更高版本)
     - .NET 8 SDK
-    - .NET MAUI 工作负载 (可通过Visual Studio Installer安装)
+    - .NET MAUI 工作负载 (可通过 Visual Studio Installer 安装)
 
 2.  **克隆仓库**:
     ```bash
@@ -51,18 +51,18 @@ WorkLog 是一款专为程序员设计的、简洁高效的桌面工作日志应
 
 3.  **恢复依赖**:
     - 打开 `WorkLog.sln` 解决方案文件。
-    - Visual Studio 会自动恢复所有NuGet包依赖。
+    - Visual Studio 会自动恢复所有 NuGet 包依赖。
 
 4.  **运行**:
-    - 在Visual Studio的工具栏中，选择 `WorkLog (Package)` 作为启动项目。
+    - 在 Visual Studio 的工具栏中，选择 `WorkLog (Package)` 作为启动项目。
     - 选择 `Windows Machine` 作为部署目标。
     - 按 `F5` 或点击“▶️ Windows Machine”按钮开始调试运行。
 
 ## 📦 如何打包
 
-本项目支持打包为 `.msix` Windows安装程序。
+本项目支持打包为 `.msix` Windows 安装程序。
 
-1.  在Visual Studio中，将配置从 `Debug` 切换为 `Release`。
+1.  在 Visual Studio 中，将配置从 `Debug` 切换为 `Release`。
 2.  右键点击 `WorkLog` 项目 -> **发布 (Publish...)**。
 3.  按照向导创建一个新的发布配置文件，选择打包，并创建一个自签名证书。
 4.  发布完成后，在指定输出目录的 `AppPackages` 文件夹下即可找到 `.msix` 安装包。
