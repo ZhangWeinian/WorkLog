@@ -1,8 +1,11 @@
 #if DEBUG
 
+using CommunityToolkit.Maui;
+
 using Microsoft.Extensions.Logging;
 
 #endif
+
 
 namespace WorkLog
 {
@@ -13,6 +16,7 @@ namespace WorkLog
 			var builder = MauiApp.CreateBuilder();
 			builder
 				.UseMauiApp<App>()
+				.UseMauiCommunityToolkit()
 				.ConfigureFonts(fonts =>
 				{
 					fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");

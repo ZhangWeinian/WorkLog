@@ -36,6 +36,9 @@ namespace WorkLog
 					TrailingContent = new ImageButton
 					{
 						Background = Colors.Transparent,
+						WidthRequest = 48,
+						HeightRequest = 48,
+						Padding = new Thickness(15),
 						VerticalOptions = LayoutOptions.Center,
 
 						Source = "info.ico",

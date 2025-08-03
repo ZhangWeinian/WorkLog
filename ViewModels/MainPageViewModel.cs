@@ -41,6 +41,9 @@ namespace WorkLog.ViewModels
 		[ObservableProperty]
 		private WorkEvent? _selectedEvent;
 
+		[ObservableProperty]
+		private string _saveButtonText = "保存";
+
 		public MainPageViewModel()
 		{
 			EventTypes = [.. Enum.GetValues<EventType>()];
@@ -48,7 +51,6 @@ namespace WorkLog.ViewModels
 
 			ClearForm();
 		}
-
 
 		[RelayCommand]
 		private async Task LoadEventsAsync()
@@ -102,13 +104,27 @@ namespace WorkLog.ViewModels
 				SelectedEvent = null;
 				await LoadEventsAsync();
 
-				var successMessage = (eventToSave.Id == 0) ? "日志已新建！" : "日志已更新！";
-				await Shell.Current.DisplayAlert("成功", successMessage, "好的");
+				await AnimateSaveButtonAsync();
 			}
 			catch (Exception ex)
 			{
 				await Shell.Current.DisplayAlert("保存失败", $"发生了一个错误: {ex.Message}", "好的");
 			}
+		}
+
+		private async Task AnimateSaveButtonAsync()
+		{
+			string originalText = "保存";
+			string savingText = "正在保存...";
+			string successText = "✓ 保存成功";
+
+			SaveButtonText = savingText;
+			await Task.Delay(400);
+
+			SaveButtonText = successText;
+			await Task.Delay(1500);
+
+			SaveButtonText = originalText;
 		}
 
 		[RelayCommand]

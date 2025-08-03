@@ -10,6 +10,8 @@
 	<Color x:Key="Secondary">#E8F1F9</Color>
 	<Color x:Key="SecondaryDarkText">#5BA0DE</Color>
 	<Color x:Key="Tertiary">#0F4777</Color>
+	<Color x:Key="PrimaryPressed">#0F4777</Color>
+	<Color x:Key="DangerousPressed">#9E1616</Color>
 
 	<Color x:Key="White">#FFFFFF</Color>
 	<Color x:Key="Black">#000000</Color>
