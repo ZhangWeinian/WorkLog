@@ -160,10 +160,21 @@
 		<Grid Grid.Column="1" RowDefinitions="*, Auto">
 			<ScrollView Grid.Row="0">
 				<VerticalStackLayout Padding="25" Spacing="20">
-					<Label
-						FontAttributes="Bold"
-						FontSize="Title"
-						Text="编辑日志" />
+					<Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+						<Label
+							Grid.Column="0"
+							FontAttributes="Bold"
+							FontSize="Title"
+							Text="编辑日志" />
+						<Label
+							Grid.Column="1"
+							Margin="0,0,0,2"
+							FontSize="Micro"
+							IsVisible="{Binding LastModifiedText, Converter={StaticResource IsNotNullOrEmptyConverter}}"
+							Text="{Binding LastModifiedText}"
+							TextColor="{StaticResource Gray500}"
+							VerticalOptions="End" />
+					</Grid>
 					<VerticalStackLayout Spacing="5">
 						<Label FontAttributes="Bold" Text="标题" />
 						<Entry
@@ -255,14 +266,6 @@
 								SelectedItem="{Binding SelectedStatus}" />
 						</Grid>
 					</Grid>
-
-					<Label
-						Margin="0,10,0,0"
-						FontSize="Micro"
-						HorizontalOptions="End"
-						IsVisible="{Binding LastModifiedText, Converter={StaticResource IsNotNullOrEmptyConverter}}"
-						Text="{Binding LastModifiedText}"
-						TextColor="{StaticResource Gray500}" />
 				</VerticalStackLayout>
 			</ScrollView>
 
