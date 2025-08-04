@@ -61,8 +61,24 @@ namespace WorkLog.Models
 			get; set;
 		}
 
-		// 注意：下面这两个属性是未来扩展用的，暂时可以不实现功能，但模型先定义好
+		/// <summary>
+		/// 这条记录在数据库中被创建的时间。由系统设置，不可更改。
+		/// </summary>
+		public DateTime CreatedAt
+		{
+			get; set;
+		}
 
+		/// <summary>
+		/// 这条记录最后一次被修改的时间。由系统自动更新。
+		/// </summary>
+		public DateTime LastModifiedAt
+		{
+			get; set;
+		}
+
+
+		// 注意：下面这两个属性是未来扩展用的，暂时可以不实现功能，但模型先定义好
 		/// <summary>
 		/// 关联的项目ID（外键）。
 		/// </summary>

@@ -25,17 +25,18 @@ namespace WorkLog.ViewModels
 		private EventStatus? _selectedFilterStatus;
 
 		[ObservableProperty]
-		private DateTime _filterStartDate = DateTime.Now.AddMonths(-1);
+		private DateTime _filterStartDate = DateTime.Today.AddMonths(-1);
 
 		[ObservableProperty]
-		private DateTime _filterEndDate = DateTime.Now;
+		private DateTime _filterEndDate = DateTime.Today;
 
 		[ObservableProperty]
-		[NotifyCanExecuteChangedFor(nameof(ApplyFiltersAndGroupingCommand))]
-		private bool _isLoading = false;
+		private string _emptyViewTitle = "正在加载...";
 
 		[ObservableProperty]
-		private string _emptyViewMessage = "正在加载日志...";
+		private string _emptyViewSubtitle = "请稍候...";
+
+		private CancellationTokenSource? _filterDebounceCts;
 
 		public AllLogsPageViewModel()
 		{
@@ -44,27 +45,21 @@ namespace WorkLog.ViewModels
 		[RelayCommand]
 		private async Task OnAppearingAsync()
 		{
-			await LoadEventsAsync();
+			if (_allEventsCache.Count == 0)
+			{
+				await LoadEventsAsync();
+			}
 		}
 
-		[RelayCommand]
 		private async Task LoadEventsAsync()
 		{
-			if (CurrentState == PageState.Loading)
-			{
-				return;
-			}
-
 			CurrentState = PageState.Loading;
 
-			await Task.Delay(100);
 			try
 			{
 				var dataLoadingTask = WorkLogDatabase.Instance.GetEventsAsync();
 				var minimumDelayTask = Task.Delay(500);
-
 				await Task.WhenAll(minimumDelayTask, dataLoadingTask);
-
 				_allEventsCache = dataLoadingTask.Result;
 				ApplyFiltersAndGrouping();
 			}
@@ -72,6 +67,8 @@ namespace WorkLog.ViewModels
 			{
 				await Shell.Current.DisplayAlert("加载失败", $"加载日志时出错: {ex.Message}", "好的");
 				CurrentState = PageState.Empty;
+				EmptyViewTitle = "加载失败";
+				EmptyViewSubtitle = "无法从数据库读取日志。";
 			}
 		}
 
@@ -79,7 +76,6 @@ namespace WorkLog.ViewModels
 		private void ApplyFiltersAndGrouping()
 		{
 			IEnumerable<WorkEvent> filtered = _allEventsCache;
-
 			filtered = filtered.Where(e => e.Timestamp.Date >= FilterStartDate.Date && e.Timestamp.Date <= FilterEndDate.Date);
 
 			if (SelectedFilterType.HasValue)
@@ -110,24 +106,42 @@ namespace WorkLog.ViewModels
 			else
 			{
 				CurrentState = PageState.Empty;
-
-				if (SelectedFilterType.HasValue || SelectedFilterStatus.HasValue)
+				if (_allEventsCache.Count == 0)
 				{
-					EmptyViewMessage = "在当前筛选条件下没有找到日志。";
+					EmptyViewTitle = "你还没有任何日志";
+					EmptyViewSubtitle = "快去工作台添加第一条吧！";
 				}
 				else
 				{
-					EmptyViewMessage = "你还没有记录任何日志。快去工作台添加第一条吧！";
+					EmptyViewTitle = "没有找到符合条件的日志";
+					EmptyViewSubtitle = "请尝试放宽筛选条件或日期范围。";
 				}
 			}
 		}
 
-		partial void OnSelectedFilterTypeChanged(EventType? value) => ApplyFiltersAndGrouping();
+		private void OnFilterChanged()
+		{
+			_filterDebounceCts?.Cancel();
+			_filterDebounceCts?.Dispose();
+			_filterDebounceCts = new CancellationTokenSource();
 
-		partial void OnSelectedFilterStatusChanged(EventStatus? value) => ApplyFiltersAndGrouping();
+			Task.Delay(300, _filterDebounceCts.Token)
+				.ContinueWith(t =>
+				{
+					if (t.IsCanceled)
+					{
+						return;
+					}
+					MainThread.BeginInvokeOnMainThread(ApplyFiltersAndGrouping);
+				}, TaskScheduler.Default);
+		}
 
-		partial void OnFilterStartDateChanged(DateTime value) => ApplyFiltersAndGrouping();
+		partial void OnSelectedFilterTypeChanged(EventType? value) => OnFilterChanged();
 
-		partial void OnFilterEndDateChanged(DateTime value) => ApplyFiltersAndGrouping();
+		partial void OnSelectedFilterStatusChanged(EventStatus? value) => OnFilterChanged();
+
+		partial void OnFilterStartDateChanged(DateTime value) => OnFilterChanged();
+
+		partial void OnFilterEndDateChanged(DateTime value) => OnFilterChanged();
 	}
 }

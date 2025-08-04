@@ -23,7 +23,7 @@
 				<Label FontAttributes="Bold" Text="筛选条件" />
 				<HorizontalStackLayout HorizontalOptions="Center" Spacing="10">
 					<DatePicker Date="{Binding FilterStartDate}" />
-					<Label Text="至" VerticalOptions="Center" />
+					<Label Text=" 至 " VerticalOptions="Center" />
 					<DatePicker Date="{Binding FilterEndDate}" />
 				</HorizontalStackLayout>
 				<HorizontalStackLayout HorizontalOptions="Center" Spacing="10">
@@ -57,7 +57,7 @@
 				</StackLayout.Triggers>
 			</StackLayout>
 
-			<StackLayout
+			<VerticalStackLayout
 				HorizontalOptions="Center"
 				IsVisible="False"
 				Spacing="10"
@@ -65,23 +65,28 @@
 				<Label
 					FontFamily="FluentIcons"
 					FontSize="48"
+					HorizontalOptions="Center"
 					Text="&#xE783;"
 					TextColor="{StaticResource Gray300}" />
 				<Label
 					FontAttributes="Bold"
 					FontSize="16"
-					Text="没有找到符合条件的日志"
+					HorizontalOptions="Center"
+					Text="{Binding EmptyViewTitle}"
 					TextColor="{StaticResource Gray500}" />
-				<Label Text="尝试调整筛选条件或日期范围。" TextColor="{StaticResource Gray400}" />
-				<StackLayout.Triggers>
+				<Label
+					HorizontalOptions="Center"
+					Text="{Binding EmptyViewSubtitle}"
+					TextColor="{StaticResource Gray400}" />
+				<VerticalStackLayout.Triggers>
 					<DataTrigger
 						Binding="{Binding CurrentState}"
 						TargetType="StackLayout"
 						Value="Empty">
 						<Setter Property="IsVisible" Value="True" />
 					</DataTrigger>
-				</StackLayout.Triggers>
-			</StackLayout>
+				</VerticalStackLayout.Triggers>
+			</VerticalStackLayout>
 
 			<CollectionView
 				IsGrouped="True"

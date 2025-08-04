@@ -63,6 +63,9 @@ namespace WorkLog.ViewModels
 		[ObservableProperty]
 		private string _emptyViewSubtitle = string.Empty;
 
+		[ObservableProperty]
+		private string _lastModifiedText = string.Empty;
+
 		public MainPageViewModel()
 		{
 			EventTypes = [.. Enum.GetValues<EventType>()];
@@ -201,6 +204,7 @@ namespace WorkLog.ViewModels
 				eventToSave.Remarks = RemarksText;
 				eventToSave.EventType = SelectedEventType;
 				eventToSave.Status = SelectedStatus;
+				eventToSave.Timestamp = SelectedDate.Date;
 
 				if (eventToSave.Id == 0)
 				{
@@ -320,6 +324,11 @@ namespace WorkLog.ViewModels
 				SelectedDate = value.Timestamp.Date;
 				SelectedEventType = value.EventType;
 				SelectedStatus = value.Status;
+				LastModifiedText = $"最后更新于: {value.LastModifiedAt.ToLocalTime():yyyy-MM-dd HH:mm}";
+			}
+			else
+			{
+				LastModifiedText = string.Empty;
 			}
 
 			DeleteCommand.NotifyCanExecuteChanged();

@@ -17,7 +17,7 @@ public partial class AllLogsPageView : ContentPage
 
 		if (BindingContext is AllLogsPageViewModel vm)
 		{
-			_ = vm.LoadEventsCommand.ExecuteAsync(null);
+			_ = vm.AppearingCommand.ExecuteAsync(null);
 		}
 	}
 }

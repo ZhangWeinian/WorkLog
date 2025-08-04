@@ -13,6 +13,8 @@
 
 	<ContentPage.Resources>
 		<converters:EnumToDescriptionConverter x:Key="EnumDescriptionConverter" />
+		<converters:DateTimeToHumanizedStringConverter x:Key="HumanDateConverter" />
+		<converters:IsNotNullOrEmptyConverter x:Key="IsNotNullOrEmptyConverter" />
 	</ContentPage.Resources>
 
 	<Grid ColumnDefinitions="*, 3*">
@@ -134,7 +136,7 @@
 										Grid.Column="4"
 										FontSize="Caption"
 										HorizontalOptions="End"
-										Text="{Binding Timestamp, StringFormat='{0:yyyy-MM-dd HH:mm}', Mode=OneWay}"
+										Text="{Binding Timestamp, Converter={StaticResource HumanDateConverter}, Mode=OneWay}"
 										TextColor="{StaticResource Gray500}" />
 								</Grid>
 							</VerticalStackLayout>
@@ -253,6 +255,14 @@
 								SelectedItem="{Binding SelectedStatus}" />
 						</Grid>
 					</Grid>
+
+					<Label
+						Margin="0,10,0,0"
+						FontSize="Micro"
+						HorizontalOptions="End"
+						IsVisible="{Binding LastModifiedText, Converter={StaticResource IsNotNullOrEmptyConverter}}"
+						Text="{Binding LastModifiedText}"
+						TextColor="{StaticResource Gray500}" />
 				</VerticalStackLayout>
 			</ScrollView>
 
