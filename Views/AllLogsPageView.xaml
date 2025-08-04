@@ -40,22 +40,22 @@
 		</Border>
 
 		<Grid Grid.Row="1" Margin="15,0">
-			<StackLayout
+			<VerticalStackLayout
 				HorizontalOptions="Center"
 				IsVisible="False"
 				Spacing="10"
 				VerticalOptions="Center">
 				<ActivityIndicator IsRunning="True" />
 				<Label Text="正在加载日志..." TextColor="{StaticResource Gray400}" />
-				<StackLayout.Triggers>
+				<VerticalStackLayout.Triggers>
 					<DataTrigger
 						Binding="{Binding CurrentState}"
-						TargetType="StackLayout"
+						TargetType="VerticalStackLayout"
 						Value="Loading">
 						<Setter Property="IsVisible" Value="True" />
 					</DataTrigger>
-				</StackLayout.Triggers>
-			</StackLayout>
+				</VerticalStackLayout.Triggers>
+			</VerticalStackLayout>
 
 			<VerticalStackLayout
 				HorizontalOptions="Center"
@@ -81,7 +81,7 @@
 				<VerticalStackLayout.Triggers>
 					<DataTrigger
 						Binding="{Binding CurrentState}"
-						TargetType="StackLayout"
+						TargetType="VerticalStackLayout"
 						Value="Empty">
 						<Setter Property="IsVisible" Value="True" />
 					</DataTrigger>
