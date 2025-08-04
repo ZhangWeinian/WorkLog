@@ -16,6 +16,9 @@ namespace WorkLog.ViewModels
 		private ObservableCollection<LogGroup> _groupedEvents = [];
 
 		[ObservableProperty]
+		private PageState _currentState = PageState.Loading;
+
+		[ObservableProperty]
 		private EventType? _selectedFilterType;
 
 		[ObservableProperty]
@@ -28,24 +31,47 @@ namespace WorkLog.ViewModels
 		private DateTime _filterEndDate = DateTime.Now;
 
 		[ObservableProperty]
+		[NotifyCanExecuteChangedFor(nameof(ApplyFiltersAndGroupingCommand))]
+		private bool _isLoading = false;
+
+		[ObservableProperty]
 		private string _emptyViewMessage = "正在加载日志...";
 
 		public AllLogsPageViewModel()
 		{
-			_ = LoadEventsAsync();
+		}
+
+		[RelayCommand]
+		private async Task OnAppearingAsync()
+		{
+			await LoadEventsAsync();
 		}
 
 		[RelayCommand]
 		private async Task LoadEventsAsync()
 		{
+			if (CurrentState == PageState.Loading)
+			{
+				return;
+			}
+
+			CurrentState = PageState.Loading;
+
+			await Task.Delay(100);
 			try
 			{
-				_allEventsCache = await WorkLogDatabase.Instance.GetEventsAsync();
+				var dataLoadingTask = WorkLogDatabase.Instance.GetEventsAsync();
+				var minimumDelayTask = Task.Delay(500);
+
+				await Task.WhenAll(minimumDelayTask, dataLoadingTask);
+
+				_allEventsCache = dataLoadingTask.Result;
 				ApplyFiltersAndGrouping();
 			}
 			catch (Exception ex)
 			{
 				await Shell.Current.DisplayAlert("加载失败", $"加载日志时出错: {ex.Message}", "好的");
+				CurrentState = PageState.Empty;
 			}
 		}
 
@@ -69,7 +95,7 @@ namespace WorkLog.ViewModels
 			var grouped = filtered
 				.OrderByDescending(e => e.Timestamp)
 				.GroupBy(e => e.Timestamp.Date)
-				.Select(g => new LogGroup(g.Key.ToString("yyyy年MM月dd日"), g.ToList()));
+				.Select(g => new LogGroup(g.Key.ToString("yyyy年MM月dd日"), [.. g]));
 
 			GroupedEvents.Clear();
 			foreach (var group in grouped)
@@ -77,9 +103,15 @@ namespace WorkLog.ViewModels
 				GroupedEvents.Add(group);
 			}
 
-			if (GroupedEvents.Count == 0)
+			if (GroupedEvents.Count > 0)
 			{
-				if (_selectedFilterType.HasValue || _selectedFilterStatus.HasValue)
+				CurrentState = PageState.Normal;
+			}
+			else
+			{
+				CurrentState = PageState.Empty;
+
+				if (SelectedFilterType.HasValue || SelectedFilterStatus.HasValue)
 				{
 					EmptyViewMessage = "在当前筛选条件下没有找到日志。";
 				}
