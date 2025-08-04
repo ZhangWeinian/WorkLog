@@ -50,12 +50,9 @@ namespace WorkLog
 				TitleBar = new TitleBar
 				{
 					HeightRequest = 48,
-
 					Icon = "appicon.ico",
-
 					Title = "牛马 の 日志",
 					Subtitle = "Preview",
-
 					TrailingContent = infoButton,
 				},
 			};

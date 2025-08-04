@@ -96,5 +96,14 @@ namespace WorkLog.Models
 		{
 			get; set;
 		}
+
+		/// <summary>
+		/// 指示这条记录是否为未保存的草稿。 这个字段不需要存储在数据库中。
+		/// </summary>
+		[Ignore]
+		public bool IsDraft
+		{
+			get; set;
+		}
 	}
 }
